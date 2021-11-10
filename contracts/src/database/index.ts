@@ -19,3 +19,13 @@ const dbOptions: ConnectionOptions = {
 };
 
 export const connectDb = async () => createConnection(dbOptions);
+
+export async function cleanupDb(connection: Connection) {
+  const db = connection.manager;
+  await db.query(
+    ` TRUNCATE event_store RESTART IDENTITY;
+      TRUNCATE contracts RESTART IDENTITY;
+      CREATE SEQUENCE IF NOT EXISTS event_store_entity_id_seq START 1;
+      ALTER TABLE event_store ALTER COLUMN entity_id SET DEFAULT NEXTVAL('event_store_entity_id_seq');`
+  );
+}

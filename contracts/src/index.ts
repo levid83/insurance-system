@@ -1,5 +1,7 @@
-import { connectDb } from "./database";
+import { connectDb, cleanupDb } from "./database";
 
 connectDb()
-  .then(async (connection) => {})
+  .then(async (connection) => {
+    await cleanupDb(connection);
+  })
   .catch((error) => console.log(error));
