@@ -15,4 +15,8 @@ export default class ContractService {
     contract.termination_date = new Date(data.terminationDate);
     await db.save(contract);
   }
+
+  static async getContracts(db: EntityManager) {
+    return await db.find(Contract);
+  }
 }
