@@ -16,7 +16,25 @@ export default class ContractService {
     await db.save(contract);
   }
 
-  static async getContracts(db: EntityManager) {
-    return await db.find(Contract);
+  static async getContractsCount(db: EntityManager, filter: any) {
+    const query = db
+      .getRepository(Contract)
+      .createQueryBuilder("contract")
+      .select("COUNT(contract.id)", "count");
+    const { count } = await query.getRawOne();
+    return parseInt(count, 10);
+  }
+
+  static async getContracts(db: EntityManager, filter: any) {
+    const query = db.getRepository(Contract).createQueryBuilder("contract");
+    if (
+      typeof filter.page != "undefined" &&
+      typeof filter.limit != "undefined"
+    ) {
+      query.skip(filter.page * filter.limit).take(filter.limit);
+    }
+    const count = await this.getContractsCount(db, filter);
+    const contracts = await query.getMany();
+    return { contracts, count };
   }
 }
