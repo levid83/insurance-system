@@ -8,6 +8,7 @@ const UseService = (serviceFunction, initialState) => {
   const callService = useCallback(
     (props = {}) => {
       setIsLoading(true);
+      setError(null);
       return serviceFunction(props)
         .then((data) => {
           setData(data);

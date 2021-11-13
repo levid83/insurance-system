@@ -1,18 +1,25 @@
-import request, { httpErrorHander } from "./HttpRequest";
+import request from "./HttpRequest";
 
 const getContracts = async ({ page, limit }) => {
-  try {
-    const response = await request.get("/contracts/", {
+  return await request({
+    url: "/contracts",
+    method: "get",
+    body: {
       params: { page, limit },
-    });
-    if (response.data.error)
-      return Promise.reject(httpErrorHander({ response }));
-    return response.data.data;
-  } catch (err) {
-    return Promise.reject(httpErrorHander(err));
-  }
+    },
+  });
 };
 
-const ContractService = { getContracts };
+const postContract = async ({ contract }) => {
+  return await request({
+    url: "/contract",
+    method: "post",
+    body: {
+      contract,
+    },
+  });
+};
+
+const ContractService = { getContracts, postContract };
 
 export default ContractService;
