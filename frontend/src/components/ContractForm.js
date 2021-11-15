@@ -1,18 +1,35 @@
+import useService from "../hooks/useService";
+import ContractService from "../services/ContractService";
+
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as Yup from "yup";
 
-import { Button, FormControl, TextField, Typography } from "@mui/material";
+import {
+  Button,
+  CircularProgress,
+  FormControl,
+  TextField,
+  Typography,
+} from "@mui/material";
 import { Box } from "@mui/material";
+import Notification from "./Notification";
 
 const ContractForm = () => {
+  const [success, postContract, error, isLoading] = useService(
+    ContractService.postContract,
+    null
+  );
+
   const validationSchema = Yup.object().shape({
     premium: Yup.number()
-      .positive("Premium must be positive")
-      .required("Premium is required"),
+      .required("Required field")
+      .typeError("Number required")
+      .positive("Only positive values"),
     startDate: Yup.date()
-      .min(new Date().toISOString().substr(0, 10))
-      .required("Start date is required"),
+      .typeError("Required field")
+      .min(new Date().toISOString().substr(0, 10), "Date cannot be in the past")
+      .required("Requied field"),
   });
 
   const {
@@ -22,57 +39,87 @@ const ContractForm = () => {
   } = useForm({
     resolver: yupResolver(validationSchema),
     defaultValues: {
-      premium: 0.0,
-      startDate: new Date().toISOString().substr(0, 10),
+      premium: "",
+      startDate: "",
     },
   });
-  const onSubmit = (data) => console.log(data);
+  const onSubmit = (contract) => {
+    postContract({
+      contract: {
+        ...contract,
+        startDate: contract.startDate.toISOString().substr(0, 10),
+      },
+    });
+  };
 
   return (
-    <Box
-      p={1}
-      sx={{
-        "& > :not(style)": { m: 1 },
-      }}
-      autoComplete="on"
-    >
-      <FormControl>
-        <TextField
-          name="premium"
-          label="Premium"
-          size="small"
-          {...register("premium")}
-          sx={{ width: "4em" }}
-        />
-        <Typography variant="inherit" color="textSecondary">
-          {errors.premium?.message}
-        </Typography>
-      </FormControl>
-      <FormControl>
-        <TextField
-          name="start-date"
-          label="Start Date"
-          type="date"
-          size="small"
-          InputLabelProps={{
-            shrink: true,
-          }}
-          {...register("startDate")}
-          error={errors.startDate ? true : false}
-          sx={{ width: "11em" }}
-        />
-        <Typography variant="inherit" color="textSecondary">
-          {errors.startDate?.message}
-        </Typography>
-      </FormControl>
-      <Button
-        type="submit"
-        variant="contained"
-        onClick={handleSubmit(onSubmit)}
+    <>
+      <Box
+        p={1}
+        sx={{
+          "& > :not(style)": { m: 1 },
+        }}
+        autoComplete="on"
       >
-        Add Contract
-      </Button>
-    </Box>
+        <FormControl>
+          <TextField
+            name="premium"
+            label="Premium"
+            size="small"
+            type="number"
+            {...register("premium")}
+            sx={{ width: "8em" }}
+          />
+          <Typography variant="inherit" color="textSecondary">
+            {errors.premium?.message}
+          </Typography>
+        </FormControl>
+        <FormControl>
+          <TextField
+            name="start-date"
+            label="Start Date"
+            type="date"
+            size="small"
+            InputLabelProps={{
+              shrink: true,
+            }}
+            {...register("startDate")}
+            error={errors.startDate ? true : false}
+            sx={{ width: "11em" }}
+          />
+          <Typography variant="inherit" color="textSecondary">
+            {errors.startDate?.message}
+          </Typography>
+        </FormControl>
+        <Button
+          type="submit"
+          variant="contained"
+          onClick={handleSubmit(onSubmit)}
+          disabled={isLoading}
+        >
+          Add Contract
+        </Button>
+        {isLoading && (
+          <FormControl>
+            <CircularProgress />
+          </FormControl>
+        )}
+      </Box>
+      {error && (
+        <Notification
+          type="error"
+          message="Contract cannot be saved"
+          position={{ vertical: "top", horizontal: "right" }}
+        />
+      )}
+      {success && (
+        <Notification
+          type="success"
+          message="The contract has been successfully saved"
+          position={{ vertical: "top", horizontal: "right" }}
+        />
+      )}
+    </>
   );
 };
 

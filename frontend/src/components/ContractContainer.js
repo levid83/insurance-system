@@ -5,6 +5,8 @@ import useService from "../hooks/useService";
 import ContractService from "../services/ContractService";
 import ContractList from "./ContractList";
 
+import ContractForm from "./ContractForm";
+
 import {
   TableContainer,
   Table,
@@ -52,8 +54,9 @@ export default function ContractContainer() {
         count: contracts.count,
       }}
     >
-      <TableContainer component={Paper}>
-        <Table sx={{ minWidth: 500 }} size={"small"} aria-label="Contract list">
+      <ContractForm />
+      <TableContainer component={Paper} sx={{ maxWidth: 600 }}>
+        <Table sx={{ minWidth: 300 }} size={"small"} aria-label="Contract list">
           <TableHead>
             <TableRow key="header">
               <TableCell component="th" scope="row">
