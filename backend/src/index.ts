@@ -5,7 +5,6 @@ import { connectDb, cleanupDb } from "./database";
 import { createServer } from "./server";
 
 import { processFileLineByLine } from "./utils";
-import EventService from "./services/EventService";
 
 async function importEvents() {
   const queryRunner = getConnection().createQueryRunner();
@@ -14,8 +13,7 @@ async function importEvents() {
   try {
     await processFileLineByLine(
       path.join(__dirname, "import", "test-data.txt"),
-      async (line) =>
-        await EventService.saveEvent(queryRunner.manager, JSON.parse(line))
+      async (line) => await eventService.saveEvent(JSON.parse(line))
     );
     await queryRunner.commitTransaction();
   } catch (err) {
@@ -26,13 +24,14 @@ async function importEvents() {
   }
 }
 
-const app = createServer();
-const PORT = process.env.PORT || 3001;
-
 connectDb()
   .then(async (connection) => {
     await cleanupDb(connection);
     await importEvents();
+
+    const app = createServer();
+    const PORT = process.env.PORT || 3001;
+
     app.listen(PORT, () => console.log(`Server listening on ${PORT}`));
   })
   .catch((error) => {

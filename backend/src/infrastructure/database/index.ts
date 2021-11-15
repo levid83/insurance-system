@@ -6,15 +6,15 @@ dotenv.config();
 const dbOptions: ConnectionOptions = {
   type: "postgres",
   url: process.env.DB_CONNECTION_URL,
-  synchronize: process.env.DB_SYNCHRONIZE ? true : false,
+  synchronize: true,
   logging: false,
-  entities: ["src/entities/**/*.ts"],
-  migrations: ["src/migration/**/*.ts"],
-  subscribers: ["src/subscribers/**/*.ts"],
+  entities: ["src/infrastructure/entity/**/*.ts"],
+  migrations: ["src/infrastructure/migration/**/*.ts"],
+  subscribers: ["src/infrastructure/subscribers/**/*.ts"],
   cli: {
-    entitiesDir: "src/entities",
-    migrationsDir: "src/migration",
-    subscribersDir: "src/subscribers",
+    entitiesDir: "src/infrastructure/entity",
+    migrationsDir: "src/infrastructure/migration",
+    subscribersDir: "src/infrastructure/subscribers",
   },
 };
 
@@ -26,6 +26,8 @@ export async function cleanupDb(connection: Connection) {
     ` TRUNCATE event_store RESTART IDENTITY;
       TRUNCATE contracts RESTART IDENTITY;
       CREATE SEQUENCE IF NOT EXISTS event_store_entity_id_seq START 1;
-      ALTER TABLE event_store ALTER COLUMN entity_id SET DEFAULT NEXTVAL('event_store_entity_id_seq');`
+      CREATE SEQUENCE IF NOT EXISTS contracts_id_seq START 1;
+      ALTER TABLE event_store ALTER COLUMN "entityId" SET DEFAULT NEXTVAL('event_store_entity_id_seq');
+      ALTER TABLE contracts ALTER COLUMN id SET DEFAULT NEXTVAL('contracts_id_seq');`
   );
 }

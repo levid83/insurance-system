@@ -2,9 +2,9 @@ import express from "express";
 import helmet from "helmet";
 import cors from "cors";
 
-import initializeRoutes from "./routes";
-
 export function createServer() {
+  const { initializeRoutes } = require("./routes");
+
   const app = express();
 
   app.use(cors());
