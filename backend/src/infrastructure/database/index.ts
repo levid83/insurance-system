@@ -31,3 +31,14 @@ export async function cleanupDb(connection: Connection) {
       ALTER TABLE contracts ALTER COLUMN id SET DEFAULT NEXTVAL('contracts_id_seq');`
   );
 }
+
+export async function adjustDb(connection: Connection) {
+  const db = connection.manager;
+  const [max] = await db.query('SELECT MAX("entityId") FROM event_store');
+
+  await db.query(
+    `ALTER SEQUENCE event_store_entity_id_seq RESTART WITH ${
+      parseInt(max.max, 10) + 1
+    }`
+  );
+}

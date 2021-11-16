@@ -29,6 +29,6 @@ export class EventStore {
     this.id = eventStore.id;
     this.name = eventStore.name;
     this.entityId = eventStore.entityId;
-    this.event = eventStore.event;
+    this.event = { ...eventStore.event, name: eventStore.name };
   }
 }

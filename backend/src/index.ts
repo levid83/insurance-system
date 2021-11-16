@@ -1,7 +1,7 @@
 import path from "path";
 import { getConnection } from "typeorm";
 import { EventStore } from "./event-sourcing/store/EventStore";
-import { connectDb, cleanupDb } from "./infrastructure/database";
+import { connectDb, cleanupDb, adjustDb } from "./infrastructure/database";
 import { EventStoreRepository } from "./infrastructure/repositories/EventStoreRepository";
 
 import { createServer } from "./server";
@@ -35,7 +35,7 @@ async function importEvents() {
     await queryRunner.commitTransaction();
   } catch (err) {
     await queryRunner.rollbackTransaction();
-    console.log("Cannot import the event list");
+    console.log("Cannot import the event list", err);
   } finally {
     await queryRunner.release();
     console.log("end event import process");
@@ -45,8 +45,8 @@ async function importEvents() {
 connectDb()
   .then(async (connection) => {
     await cleanupDb(connection);
-
     await importEvents();
+    await adjustDb(connection);
 
     const app = createServer();
     const PORT = process.env.PORT || 3001;
