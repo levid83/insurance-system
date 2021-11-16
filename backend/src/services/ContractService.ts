@@ -1,6 +1,6 @@
 import { getCustomRepository, ObjectType } from "typeorm";
 import { Contract } from "../domain/contract/Contract";
-import { TerminateContractDTO } from "../domain/contract/DTO";
+import { ContractDTO, TerminateContractDTO } from "../domain/contract/DTO";
 import { ContractRepository } from "../infrastructure/repositories/ContractRepository";
 
 export default class ContractService {
@@ -30,11 +30,11 @@ export default class ContractService {
   async getContracts(filter?: {
     page?: number;
     limit?: number;
-  }): Promise<{ contracts: Contract[]; count: number }> {
+  }): Promise<{ contracts: any[]; count: number }> {
     const count = await this.repo.getContractsCount(filter);
     const contracts = await this.repo.getContracts(filter);
     return {
-      contracts,
+      contracts: contracts.map((ctr) => ctr.toJSON()) || [],
       count,
     };
   }

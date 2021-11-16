@@ -18,7 +18,7 @@ export default class EventStoreService {
     try {
       return await this.repo.saveEvent(eventStore);
     } catch (err) {
-      console.log("Cannot save the event store item ", eventStore);
+      console.log("Cannot save the event store item ");
     }
   }
 

@@ -15,6 +15,7 @@ export class TerminateContractHandler
         command.contractId
       );
       if (!contract) return false;
+      contract.validateTermination(command.terminationDate);
       contract.terminate(command.terminationDate);
     }
   }

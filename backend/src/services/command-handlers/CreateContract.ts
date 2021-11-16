@@ -3,6 +3,7 @@ import ContractService from "../ContractService";
 import { ContractCreatedEvent } from "../../domain/contract/events/ContractCreatedEvent";
 import { CreateContractCommand } from "../../domain/contract/commands/CreateContractCommand";
 import { Event } from "../../event-sourcing/interfaces/Event";
+import { Contract } from "../../domain/contract/Contract";
 
 export class CreateContractHandler
   implements CommandHandler<CreateContractCommand, Event>
@@ -16,6 +17,9 @@ export class CreateContractHandler
       );
       if (contract) return false;
     }
+
+    Contract.validateCreation(command);
+
     return true;
   }
 
