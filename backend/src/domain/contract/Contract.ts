@@ -8,8 +8,17 @@ export class Contract extends Entity<ContractDTO> {
   }
 
   public static create(props: ContractDTO): Contract {
-    const instance = new Contract(props);
-    return instance;
+    if (typeof props.premium === "undefined" || props.premium === null)
+      throw new Error("Missing premium.");
+    if (isNaN(props.premium) || props.premium < 0)
+      throw new Error("Premium should be a positive number");
+
+    if (!props.startDate) throw new Error("Missing contract start date.");
+
+    if (props.startDate <= new Date())
+      throw new Error("Contract start date cannot be in the past");
+
+    return new Contract(props);
   }
 
   get id(): number {
@@ -37,8 +46,12 @@ export class Contract extends Entity<ContractDTO> {
     };
   }
 
-  terminate(date: Date): boolean {
-    this.props.terminationDate = date;
-    return true;
+  terminate(termDate: Date): void {
+    if (!termDate) throw new Error("Missing termination date");
+    if (this.startDate >= termDate)
+      throw new Error("Start date must be greater then termination date");
+    if (termDate <= new Date())
+      throw new Error("Termination date cannot be in the past");
+    this.props.terminationDate = termDate;
   }
 }

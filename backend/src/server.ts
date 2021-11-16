@@ -3,7 +3,7 @@ import helmet from "helmet";
 import cors from "cors";
 
 export function createServer() {
-  const { initializeRoutes } = require("./routes");
+  const { initializeRoutes } = require("./api/routes");
 
   const app = express();
 

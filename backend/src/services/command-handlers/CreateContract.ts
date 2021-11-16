@@ -1,8 +1,8 @@
-import { CommandHandler } from "../../../event-sourcing/interfaces/CommandHandler";
-import ContractService from "../../../services/ContractService";
-import { ContractCreatedEvent } from "../events/ContractCreatedEvent";
-import { CreateContractCommand } from "./../commands/CreateContractCommand";
-import { Event } from "../../../event-sourcing/interfaces/Event";
+import { CommandHandler } from "../../event-sourcing/interfaces/CommandHandler";
+import ContractService from "../ContractService";
+import { ContractCreatedEvent } from "../../domain/contract/events/ContractCreatedEvent";
+import { CreateContractCommand } from "../../domain/contract/commands/CreateContractCommand";
+import { Event } from "../../event-sourcing/interfaces/Event";
 
 export class CreateContractHandler
   implements CommandHandler<CreateContractCommand, Event>

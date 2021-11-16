@@ -2,6 +2,7 @@ import { Repository, EntityRepository } from "typeorm";
 import { Contract } from "../entity/Contract";
 import { Contract as DomainContract } from "../../domain/contract/Contract";
 import { ContractRepository as RepositoryInterface } from "../../domain/contract/Repository";
+import { TerminateContractDTO } from "../../domain/contract/DTO";
 
 @EntityRepository(Contract)
 export class ContractRepository
@@ -15,10 +16,10 @@ export class ContractRepository
     return Contract.toDomain(res);
   }
 
-  async getContractById(id: number): Promise<DomainContract | false> {
+  async getContractById(id: number): Promise<DomainContract | null> {
     const res = await this.findOne(id);
     if (res) return Contract.toDomain(res);
-    else return false;
+    else return null;
   }
 
   async getContracts(filter?: {
@@ -42,5 +43,15 @@ export class ContractRepository
     const query = this.createQueryBuilder().select("COUNT(id)", "count");
     const { count } = await query.getRawOne();
     return parseInt(count, 10);
+  }
+
+  async terminateContract(
+    data: TerminateContractDTO
+  ): Promise<DomainContract | boolean> {
+    const ctr = await this.getContractById(data.contractId);
+    if (ctr instanceof Contract) {
+      ctr.terminate(data.terminationDate);
+      return (await this.manager.save(ctr)) as DomainContract;
+    } else return false;
   }
 }

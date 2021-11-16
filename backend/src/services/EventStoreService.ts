@@ -9,12 +9,17 @@ export default class EventStoreService {
     if (repository) this.repo = getCustomRepository(repository);
   }
 
-  setRepository(repository: EventStoreRepository) {
+  withRepository(repository: EventStoreRepository) {
     this.repo = repository;
+    return this;
   }
 
   async save(eventStore: EventStore): Promise<EventStore> {
-    return await this.repo.saveEvent(eventStore);
+    try {
+      return await this.repo.saveEvent(eventStore);
+    } catch (err) {
+      console.log("Cannot save the event store item ", eventStore);
+    }
   }
 
   async getEventById(id: number) {

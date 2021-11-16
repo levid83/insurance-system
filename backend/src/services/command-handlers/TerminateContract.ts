@@ -1,8 +1,8 @@
-import { CommandHandler } from "../../../event-sourcing/interfaces/CommandHandler";
-import ContractService from "../../../services/ContractService";
-import { ContractTerminatedEvent } from "../events/ContractTerminatedEvent";
-import { TerminateContractCommand } from "./../commands/TerminateContractCommand";
-import { Event } from "../../../event-sourcing/interfaces/Event";
+import { CommandHandler } from "../../event-sourcing/interfaces/CommandHandler";
+import ContractService from "../ContractService";
+import { ContractTerminatedEvent } from "../../domain/contract/events/ContractTerminatedEvent";
+import { TerminateContractCommand } from "../../domain/contract/commands/TerminateContractCommand";
+import { Event } from "../../event-sourcing/interfaces/Event";
 
 export class TerminateContractHandler
   implements CommandHandler<TerminateContractCommand, Event>
@@ -15,15 +15,12 @@ export class TerminateContractHandler
         command.contractId
       );
       if (!contract) return false;
-      if (contract.terminationDate === null) return true;
-      if (contract.startDate >= command.terminationDate) return false;
-      if (command.terminationDate <= new Date()) return false;
-      return true;
+      contract.terminate(command.terminationDate);
     }
   }
 
   async execute(command: TerminateContractCommand): Promise<Event | false> {
-    if (!(await this.validate(command))) return false;
+    await this.validate(command);
 
     const event: ContractTerminatedEvent = {
       contractId: command.contractId,
