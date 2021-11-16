@@ -5,7 +5,7 @@ import useService from "../hooks/useService";
 import ContractService from "../services/ContractService";
 import ContractList from "./ContractList";
 
-import ContractForm from "./ContractForm";
+import AddContractForm from "./AddContractForm";
 
 import {
   TableContainer,
@@ -19,6 +19,7 @@ import {
 } from "@mui/material";
 import { TableHead } from "@mui/material";
 import Pagination from "./Pagination";
+import TerminateContractForm from "./TerminateContractForm";
 
 const ROWS_PER_PAGE = 25;
 
@@ -26,6 +27,7 @@ export const ContractContext = createContext({});
 
 export default function ContractContainer() {
   const [page, setPage] = useState(0);
+  const [selected, setSelected] = useState(0);
   const [contracts, getContracts, error, isLoading] = useService(
     ContractService.getContracts,
     { contracts: [], count: 0 }
@@ -43,6 +45,18 @@ export default function ContractContainer() {
     setPage(newPage);
   };
 
+  const handleRefresh = () => {
+    setSelected(0);
+    getContracts({
+      page,
+      limit: ROWS_PER_PAGE,
+    });
+  };
+
+  const handleSelectedRow = (event, id) => {
+    setSelected(id);
+  };
+
   if (error) throw new Error("Cannot get the contract list");
 
   return (
@@ -52,20 +66,22 @@ export default function ContractContainer() {
         page: page,
         rowsPerPage: ROWS_PER_PAGE,
         count: contracts.count,
+        refresh: handleRefresh,
+        selected: selected,
+        onSelectRow: handleSelectedRow,
       }}
     >
-      <ContractForm />
-      <TableContainer component={Paper} sx={{ maxWidth: 600 }}>
-        <Table sx={{ minWidth: 300 }} size={"small"} aria-label="Contract list">
+      <AddContractForm />
+      <TerminateContractForm />
+      <TableContainer component={Paper} sx={{ maxWidth: 800 }}>
+        <Table sx={{ minWidth: 600 }} size={"small"} aria-label="Contract list">
           <TableHead>
             <TableRow key="header">
-              <TableCell component="th" scope="row">
-                Id
-              </TableCell>
+              <TableCell></TableCell>
+              <TableCell>Id</TableCell>
               <TableCell>Premium</TableCell>
               <TableCell>Start Date</TableCell>
               <TableCell>Termination Date</TableCell>
-              <TableCell>Terminate</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>

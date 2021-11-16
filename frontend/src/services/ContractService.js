@@ -20,6 +20,17 @@ const postContract = async ({ contract }) => {
   });
 };
 
-const ContractService = { getContracts, postContract };
+const terminateContract = async ({ contractId, terminationDate }) => {
+  return await request({
+    url: "/contract",
+    method: "patch",
+    body: {
+      contractId,
+      terminationDate,
+    },
+  });
+};
+
+const ContractService = { getContracts, postContract, terminateContract };
 
 export default ContractService;

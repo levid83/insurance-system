@@ -15,7 +15,7 @@ import {
 import { Box } from "@mui/material";
 import Notification from "./Notification";
 
-const ContractForm = () => {
+const AddContractForm = () => {
   const [success, postContract, error, isLoading] = useService(
     ContractService.postContract,
     null
@@ -123,4 +123,4 @@ const ContractForm = () => {
   );
 };
 
-export default ContractForm;
+export default AddContractForm;
