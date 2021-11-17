@@ -4,11 +4,9 @@ import Snackbar from "@mui/material/Snackbar";
 import MuiAlert from "@mui/material/Alert";
 import { Stack } from "@mui/material";
 
-export default function Notification({
-  type,
-  message,
-  position: { vertical, horizontal },
-}) {
+import PropTypes from "prop-types";
+
+function Notification({ type, message, position: { vertical, horizontal } }) {
   const [open, setOpen] = useState(true);
 
   const handleClose = (event, reason) => {
@@ -33,3 +31,15 @@ export default function Notification({
     </Stack>
   );
 }
+
+Notification.propTypes = {
+  type: PropTypes.string.isRequired,
+  message: PropTypes.string.isRequired,
+  position: PropTypes.shape({
+    vertical: PropTypes.string.isRequired,
+    horizontal: PropTypes.string.isRequired,
+  }).isRequired,
+  terminationDate: PropTypes.string,
+};
+
+export default Notification;

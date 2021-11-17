@@ -5,7 +5,7 @@ import PropTypes from "prop-types";
 import { TablePagination } from "@mui/material";
 import PaginationActions from "./PaginationActions";
 
-export default function Pagination({ colSpan }) {
+function Pagination({ colSpan }) {
   const contractContext = useContext(ContractContext);
   return (
     <TablePagination
@@ -23,3 +23,5 @@ export default function Pagination({ colSpan }) {
 Pagination.propTypes = {
   colSpan: PropTypes.number.isRequired,
 };
+
+export default Pagination;

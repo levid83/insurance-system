@@ -1,8 +1,9 @@
 import { useContext } from "react";
 import { Radio, TableCell, TableRow } from "@mui/material";
 import { ContractContext } from "./ContractContainer";
+import PropTypes from "prop-types";
 
-export default function Contract({ contract }) {
+function Contract({ contract }) {
   const ctx = useContext(ContractContext);
   return (
     <TableRow hover onClick={(event) => ctx.onSelectRow(event, contract.id)}>
@@ -21,3 +22,14 @@ export default function Contract({ contract }) {
     </TableRow>
   );
 }
+
+Contract.propTypes = {
+  contract: PropTypes.shape({
+    id: PropTypes.number,
+    premium: PropTypes.number.isRequired,
+    startDate: PropTypes.string.isRequired,
+    terminationDate: PropTypes.string,
+  }).isRequired,
+};
+
+export default Contract;

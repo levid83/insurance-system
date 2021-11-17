@@ -7,7 +7,7 @@ import { EventService } from "../../services/EventService";
 import EventStoreService from "../../services/EventStoreService";
 import { getConnection } from "typeorm";
 
-const { validationResult } = require("express-validator");
+import { validationResult } from "express-validator";
 
 const contractService = new ContractService(
   getConnection().manager.getCustomRepository(ContractRepository)
