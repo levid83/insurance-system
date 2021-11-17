@@ -8,6 +8,8 @@ import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as Yup from "yup";
 
+import { format } from "date-fns";
+
 import {
   Button,
   CircularProgress,
@@ -41,9 +43,8 @@ const AddContractForm = () => {
       .typeError("Number required")
       .positive("Only positive values"),
     startDate: Yup.date()
-      .typeError("Required field")
-      .min(new Date().toISOString().substr(0, 10), "Date cannot be in the past")
-      .required("Requied field"),
+      .typeError("Start Date is required")
+      .required("Start Date is required"),
   });
 
   const {
@@ -61,7 +62,7 @@ const AddContractForm = () => {
     postContract({
       contract: {
         ...contract,
-        startDate: contract.startDate.toISOString().substr(0, 10),
+        startDate: format(new Date(contract.startDate), "yyyy-MM-dd"),
       },
     });
   };
@@ -101,6 +102,7 @@ const AddContractForm = () => {
             error={errors.startDate ? true : false}
             sx={{ width: "11em" }}
           />
+
           <Typography variant="inherit" color="textSecondary">
             {errors.startDate?.message}
           </Typography>
@@ -122,14 +124,14 @@ const AddContractForm = () => {
       {error && (
         <Notification
           type="error"
-          message="Contract cannot be saved"
+          message={error}
           position={{ vertical: "top", horizontal: "right" }}
         />
       )}
       {success && (
         <Notification
           type="success"
-          message="The contract has been successfully saved"
+          message={success}
           position={{ vertical: "top", horizontal: "right" }}
         />
       )}

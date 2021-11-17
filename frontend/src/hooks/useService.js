@@ -1,14 +1,14 @@
 import { useState, useCallback } from "react";
 
 const UseService = (serviceFunction, initialState) => {
-  const [error, setError] = useState(null);
+  const [error, setError] = useState("");
   const [data, setData] = useState(initialState);
   const [isLoading, setIsLoading] = useState(false);
 
   const callService = useCallback(
     (props = {}) => {
       setIsLoading(true);
-      setError(null);
+      setError("");
       setData(initialState);
       return serviceFunction(props)
         .then((data) => {
@@ -16,7 +16,7 @@ const UseService = (serviceFunction, initialState) => {
           setIsLoading(false);
         })
         .catch((err) => {
-          setError(err);
+          setError(err.error);
           setIsLoading(false);
         });
     },

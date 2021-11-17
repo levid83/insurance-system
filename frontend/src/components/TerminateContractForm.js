@@ -7,6 +7,8 @@ import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as Yup from "yup";
 
+import { format } from "date-fns";
+
 import {
   Button,
   CircularProgress,
@@ -24,7 +26,6 @@ const TerminateContractForm = () => {
     ContractService.terminateContract,
     null
   );
-
   useEffect(() => {
     if (success) {
       const tout = setTimeout(() => ctx.refresh(), 3000);
@@ -38,10 +39,6 @@ const TerminateContractForm = () => {
   const validationSchema = Yup.object().shape({
     terminationDate: Yup.date()
       .typeError("Termination Date is required")
-      .min(
-        new Date().toISOString().substr(0, 10),
-        "Termination Date cannot be in the past"
-      )
       .required("Termination Date is required"),
   });
 
@@ -64,7 +61,7 @@ const TerminateContractForm = () => {
     }
     terminateContract({
       contractId: ctx.selected,
-      terminationDate: form.terminationDate.toISOString().substr(0, 10),
+      terminationDate: format(new Date(form.terminationDate), "yyyy-MM-dd"),
     });
   };
 
@@ -119,14 +116,14 @@ const TerminateContractForm = () => {
       {error && (
         <Notification
           type="error"
-          message="Termination date cannot be saved"
+          message={error}
           position={{ vertical: "top", horizontal: "right" }}
         />
       )}
       {success && (
         <Notification
           type="success"
-          message="The termination date has been successfully saved"
+          message={success}
           position={{ vertical: "top", horizontal: "right" }}
         />
       )}

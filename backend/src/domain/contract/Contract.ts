@@ -1,3 +1,5 @@
+import { format } from "date-fns";
+
 import { Entity } from "../Entity";
 import { CreateContractDTO } from "./DTO";
 
@@ -19,8 +21,12 @@ export class Contract extends Entity<CreateContractDTO> {
 
     if (!props.startDate) throw new Error("Missing contract start date.");
 
-    if (new Date(props.startDate) < new Date())
+    if (
+      format(new Date(props.startDate), "yyyy-MM-dd") <
+      format(new Date(), "yyyy-MM-dd")
+    )
       throw new Error("Contract start date cannot be in the past");
+    return true;
   }
 
   get id(): number {
@@ -53,10 +59,27 @@ export class Contract extends Entity<CreateContractDTO> {
   }
 
   validateTermination(termDate: Date) {
+    if (
+      this.terminationDate &&
+      format(new Date(this.terminationDate), "yyyy-MM-dd") <
+        format(new Date(), "yyyy-MM-dd")
+    )
+      throw new Error("Contract is already expired");
+
     if (!termDate) throw new Error("Missing termination date");
-    if (new Date(this.startDate) > new Date(termDate))
-      throw new Error("Start date must be greater then termination date");
-    if (new Date(termDate) < new Date())
+    if (
+      format(new Date(this.startDate), "yyyy-MM-dd") >
+      format(new Date(termDate), "yyyy-MM-dd")
+    )
+      throw new Error(
+        "Termination date should be greater then start date (or equal)"
+      );
+    if (
+      format(new Date(termDate), "yyyy-MM-dd") <
+      format(new Date(), "yyyy-MM-dd")
+    )
       throw new Error("Termination date cannot be in the past");
+
+    return true;
   }
 }

@@ -39,7 +39,6 @@ async function importEvents() {
     await queryRunner.rollbackTransaction();
     console.log("Cannot import the event list", err);
   } finally {
-    queryRunner.release();
     console.log("end event import process");
   }
 }
