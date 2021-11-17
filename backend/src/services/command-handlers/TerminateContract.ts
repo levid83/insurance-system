@@ -1,11 +1,11 @@
-import { CommandHandler } from "../../event-sourcing/interfaces/CommandHandler";
+import { CommandHandler } from "../../event-sourcing/interfaces/CommandHandlerInterface";
 import ContractService from "../ContractService";
 import { ContractTerminatedEvent } from "../../domain/contract/events/ContractTerminatedEvent";
 import { TerminateContractCommand } from "../../domain/contract/commands/TerminateContractCommand";
-import { Event } from "../../event-sourcing/interfaces/Event";
+import { EventInterface } from "../../event-sourcing/interfaces/EventInterface";
 
 export class TerminateContractHandler
-  implements CommandHandler<TerminateContractCommand, Event>
+  implements CommandHandler<TerminateContractCommand, EventInterface>
 {
   constructor(private contractService: ContractService) {}
 
@@ -20,7 +20,9 @@ export class TerminateContractHandler
     }
   }
 
-  async execute(command: TerminateContractCommand): Promise<Event | false> {
+  async execute(
+    command: TerminateContractCommand
+  ): Promise<EventInterface | false> {
     await this.validate(command);
 
     const event: ContractTerminatedEvent = {

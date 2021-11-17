@@ -1,6 +1,6 @@
-import { Command } from "../../../event-sourcing/interfaces/Command";
+import { CommandInterface } from "../../../event-sourcing/interfaces/CommandInterface";
 
-export interface TerminateContractCommand extends Command {
+export interface TerminateContractCommand extends CommandInterface {
   contractId: number;
   terminationDate: Date;
 }

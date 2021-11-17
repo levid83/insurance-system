@@ -1,15 +1,15 @@
 import { Entity } from "../../domain/Entity";
-import { Event } from "../interfaces/Event";
-import { EventStoreDTO } from "./EventStoreDTO";
+import { EventInterface } from "../interfaces/EventInterface";
+import { EventDTO } from "./DTO";
 
-export class EventStore extends Entity<EventStoreDTO> implements Event {
-  private constructor(props: EventStoreDTO) {
+export class Event extends Entity<EventDTO> implements EventInterface {
+  private constructor(props: EventDTO) {
     const { id, ...data } = props;
     super(data, id);
   }
 
-  public static create(props: EventStoreDTO): EventStore {
-    const instance = new EventStore(props);
+  public static create(props: EventDTO): Event {
+    const instance = new Event(props);
     return instance;
   }
 

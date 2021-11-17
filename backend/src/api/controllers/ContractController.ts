@@ -5,19 +5,26 @@ import { EventStoreRepository } from "../../infrastructure/repositories/EventSto
 import ContractService from "../../services/ContractService";
 import { EventService } from "../../services/EventService";
 import EventStoreService from "../../services/EventStoreService";
+import { getConnection } from "typeorm";
 
 const { validationResult } = require("express-validator");
 
-const contractService = new ContractService(ContractRepository);
+const contractService = new ContractService(
+  getConnection().manager.getCustomRepository(ContractRepository)
+);
 
 const contractCreationService = new EventService(
   new CreateContractHandler(contractService),
-  new EventStoreService(EventStoreRepository)
+  new EventStoreService(
+    getConnection().manager.getCustomRepository(EventStoreRepository)
+  )
 );
 
 const contractTerminationService = new EventService(
   new TerminateContractHandler(contractService),
-  new EventStoreService(EventStoreRepository)
+  new EventStoreService(
+    getConnection().manager.getCustomRepository(EventStoreRepository)
+  )
 );
 
 export async function getContracts(req, res) {
@@ -31,7 +38,7 @@ export async function getContracts(req, res) {
     });
     return res.status(200).json({ data: result });
   } catch (err) {
-    return res.status(404).json({ error: "No contract found" });
+    return res.status(404).json({ error: "No contract has been found" });
   }
 }
 
@@ -45,7 +52,9 @@ export async function addContract(req, res) {
 
     await contractCreationService.execute({ premium, startDate, contractId });
 
-    return res.status(201).json({ data: "contract successfully created" });
+    return res
+      .status(201)
+      .json({ data: "contract has been successfully created" });
   } catch (err) {
     return res.status(404).json({ error: err.message });
   }
@@ -56,11 +65,13 @@ export async function terminateContract(req, res) {
   if (!errors.isEmpty())
     return res.status(400).json({ error: errors.array()[0].msg });
   try {
-    const { terminationDate, contractId } = req.body.contract;
+    const { terminationDate, contractId } = req.body;
 
     await contractTerminationService.execute({ terminationDate, contractId });
 
-    return res.status(201).json({ data: "contract termination date set" });
+    return res
+      .status(201)
+      .json({ data: "contract termination date has been successfully set" });
   } catch (err) {
     return res.status(404).json({ error: err.message });
   }

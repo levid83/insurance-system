@@ -1,10 +1,10 @@
 import { Contract as DomainContract } from "../../domain/contract/Contract";
-import { Entity, Column, PrimaryGeneratedColumn, Index } from "typeorm";
+import { Entity, Column, PrimaryColumn, Index } from "typeorm";
 
 @Entity({ name: "contracts" })
 export class Contract {
   @Index()
-  @PrimaryGeneratedColumn()
+  @PrimaryColumn()
   id: number;
 
   @Column()
@@ -25,10 +25,11 @@ export class Contract {
     });
   }
 
-  fromDomain(contract: DomainContract): void {
+  fromDomain(contract: DomainContract): Contract {
     this.id = contract.id;
     this.premium = contract.premium;
     this.startDate = contract.startDate;
     this.terminationDate = contract.terminationDate;
+    return this;
   }
 }

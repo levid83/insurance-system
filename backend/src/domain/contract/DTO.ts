@@ -1,4 +1,4 @@
-export interface ContractDTO {
+export interface CreateContractDTO {
   id?: number;
   premium: number;
   startDate: Date;

@@ -10,11 +10,11 @@ const dbOptions: ConnectionOptions = {
   logging: false,
   entities: ["src/infrastructure/entity/**/*.ts"],
   migrations: ["src/infrastructure/migration/**/*.ts"],
-  subscribers: ["src/infrastructure/subscribers/**/*.ts"],
+  subscribers: ["src/services/subscribers/**/*.ts"],
   cli: {
     entitiesDir: "src/infrastructure/entity",
     migrationsDir: "src/infrastructure/migration",
-    subscribersDir: "src/infrastructure/subscribers",
+    subscribersDir: "src/services/subscribers",
   },
 };
 

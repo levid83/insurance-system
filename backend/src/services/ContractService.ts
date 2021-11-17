@@ -1,12 +1,11 @@
-import { getCustomRepository, ObjectType } from "typeorm";
 import { Contract } from "../domain/contract/Contract";
-import { ContractDTO, TerminateContractDTO } from "../domain/contract/DTO";
+import { TerminateContractDTO } from "../domain/contract/DTO";
 import { ContractRepository } from "../infrastructure/repositories/ContractRepository";
 
 export default class ContractService {
   private repo: ContractRepository;
-  constructor(repository?: ObjectType<ContractRepository>) {
-    if (repository) this.repo = getCustomRepository(repository);
+  constructor(repository?: ContractRepository) {
+    if (repository) this.repo = repository;
   }
 
   withRepository(repository: ContractRepository) {
@@ -18,7 +17,7 @@ export default class ContractService {
     try {
       return await this.repo.saveContract(contract);
     } catch (err) {
-      console.log("Cannot create the contract ", contract);
+      console.log("Cannot create the contract ", contract, err);
     }
   }
 

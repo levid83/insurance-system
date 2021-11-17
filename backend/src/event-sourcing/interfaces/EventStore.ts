@@ -1,5 +1,5 @@
-import { Event } from "./Event";
+import { EventInterface } from "./EventInterface";
 
 export interface EventStore {
-  save(event: Event): Promise<Event>;
+  save(event: EventInterface): Promise<EventInterface>;
 }

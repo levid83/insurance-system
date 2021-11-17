@@ -1,12 +1,11 @@
-import { getCustomRepository, ObjectType } from "typeorm";
 import { EventStoreRepository } from "../infrastructure/repositories/EventStoreRepository";
 
-import { EventStore } from "../event-sourcing/store/EventStore";
+import { Event } from "../event-sourcing/store/Event";
 
 export default class EventStoreService {
   private repo: EventStoreRepository;
-  constructor(repository?: ObjectType<EventStoreRepository>) {
-    if (repository) this.repo = getCustomRepository(repository);
+  constructor(repository?: EventStoreRepository) {
+    if (repository) this.repo = repository;
   }
 
   withRepository(repository: EventStoreRepository) {
@@ -14,15 +13,15 @@ export default class EventStoreService {
     return this;
   }
 
-  async save(eventStore: EventStore): Promise<EventStore> {
+  async save(event: Event): Promise<Event> {
     try {
-      return await this.repo.saveEvent(eventStore);
+      return await this.repo.saveEvent(event);
     } catch (err) {
-      console.log("Cannot save the event store item ");
+      console.log("Cannot save the event store item ", event, err);
     }
   }
 
   async getEventById(id: number) {
-    return await this.repo.findOne(id);
+    return await this.repo.getEventById(id);
   }
 }

@@ -1,17 +1,17 @@
 import { Entity } from "../Entity";
-import { ContractDTO } from "./DTO";
+import { CreateContractDTO } from "./DTO";
 
-export class Contract extends Entity<ContractDTO> {
-  private constructor(props: ContractDTO) {
+export class Contract extends Entity<CreateContractDTO> {
+  private constructor(props: CreateContractDTO) {
     const { id, ...data } = props;
     super(data, id);
   }
 
-  public static create(props: ContractDTO): Contract {
+  public static create(props: CreateContractDTO): Contract {
     return new Contract(props);
   }
 
-  static validateCreation(props: ContractDTO) {
+  static validateCreation(props: CreateContractDTO) {
     if (typeof props.premium === "undefined" || props.premium === null)
       throw new Error("Missing premium.");
     if (isNaN(props.premium) || props.premium < 0)
@@ -19,7 +19,7 @@ export class Contract extends Entity<ContractDTO> {
 
     if (!props.startDate) throw new Error("Missing contract start date.");
 
-    if (new Date(props.startDate) <= new Date())
+    if (new Date(props.startDate) < new Date())
       throw new Error("Contract start date cannot be in the past");
   }
 
@@ -54,9 +54,9 @@ export class Contract extends Entity<ContractDTO> {
 
   validateTermination(termDate: Date) {
     if (!termDate) throw new Error("Missing termination date");
-    if (new Date(this.startDate) >= new Date(termDate))
+    if (new Date(this.startDate) > new Date(termDate))
       throw new Error("Start date must be greater then termination date");
-    if (new Date(termDate) <= new Date())
+    if (new Date(termDate) < new Date())
       throw new Error("Termination date cannot be in the past");
   }
 }

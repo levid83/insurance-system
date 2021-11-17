@@ -1,6 +1,6 @@
 import { EntityRepository, Repository } from "typeorm";
 import { EventStore } from "../entity/EventStore";
-import { EventStore as DomainEventStore } from "../../event-sourcing/store/EventStore";
+import { Event } from "../../event-sourcing/store/Event";
 import { EventStoreRepository as RepositoryInterface } from "../../event-sourcing/store/Repository";
 
 @EntityRepository(EventStore)
@@ -8,10 +8,14 @@ export class EventStoreRepository
   extends Repository<EventStore>
   implements RepositoryInterface
 {
-  async saveEvent(eventStore: DomainEventStore): Promise<DomainEventStore> {
-    const es = new EventStore();
-    es.fromDomain(eventStore);
-    const res = await this.manager.save(es);
+  async saveEvent(event: Event): Promise<Event> {
+    const eventStoreItem = new EventStore().fromDomain(event);
+    const res = await this.save(eventStoreItem);
     return EventStore.toDomain(res);
+  }
+
+  async getEventById(id: number): Promise<Event> {
+    const newEvent = await this.findOne(id);
+    return EventStore.toDomain(newEvent);
   }
 }

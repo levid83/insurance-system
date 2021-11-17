@@ -24,11 +24,11 @@ export const initializeRoutes = (app: any) => {
   app.patch(
     "/contract",
     [
-      body("contract.contractId", "Contract id must be a number")
+      body("contractId", "Contract Id must be a number")
         .isNumeric()
         .not()
         .isEmpty(),
-      body("contract.terminationDate", "Start Date must be a date")
+      body("terminationDate", "Termination Date must be a date")
         .isDate({ format: "YYYY-MM-DD" })
         .not()
         .isEmpty(),

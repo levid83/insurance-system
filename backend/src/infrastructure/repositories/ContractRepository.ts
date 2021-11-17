@@ -10,9 +10,7 @@ export class ContractRepository
   implements RepositoryInterface
 {
   async saveContract(contract: DomainContract): Promise<DomainContract> {
-    const ctr = new Contract();
-    ctr.fromDomain(contract);
-    const res = await this.manager.save(ctr);
+    const res = await this.save(new Contract().fromDomain(contract));
     return Contract.toDomain(res);
   }
 
@@ -35,6 +33,7 @@ export class ContractRepository
     ) {
       query.skip(filter.page * filter.limit).take(filter.limit);
     }
+    query.orderBy("id", "DESC");
     const contracts: Contract[] = await query.getMany();
     return contracts.map((contract) => Contract.toDomain(contract));
   }
@@ -48,10 +47,11 @@ export class ContractRepository
   async terminateContract(
     data: TerminateContractDTO
   ): Promise<DomainContract | boolean> {
-    const ctr = await this.getContractById(data.contractId);
-    if (ctr instanceof Contract) {
-      ctr.terminate(data.terminationDate);
-      return (await this.manager.save(ctr)) as DomainContract;
+    const contract = await this.getContractById(data.contractId);
+    if (contract instanceof DomainContract) {
+      contract.terminate(data.terminationDate);
+      await this.save(new Contract().fromDomain(contract));
+      return contract;
     } else return false;
   }
 }

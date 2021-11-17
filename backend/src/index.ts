@@ -1,6 +1,6 @@
 import path from "path";
 import { getConnection } from "typeorm";
-import { EventStore } from "./event-sourcing/store/EventStore";
+import { Event } from "./event-sourcing/store/Event";
 import { connectDb, cleanupDb, adjustDb } from "./infrastructure/database";
 import { EventStoreRepository } from "./infrastructure/repositories/EventStoreRepository";
 
@@ -16,7 +16,9 @@ async function importEvents() {
   await queryRunner.connect();
   await queryRunner.startTransaction();
 
-  const eventStoreService = new EventStoreService(EventStoreRepository);
+  const eventStoreService = new EventStoreService(
+    queryRunner.manager.getCustomRepository(EventStoreRepository)
+  );
 
   try {
     await processFileLineByLine(
@@ -24,7 +26,7 @@ async function importEvents() {
       async (line) => {
         const rawEvent = JSON.parse(line);
         await eventStoreService.save(
-          EventStore.create({
+          Event.create({
             entityId: rawEvent.contractId,
             name: rawEvent.name,
             event: rawEvent,
@@ -37,7 +39,7 @@ async function importEvents() {
     await queryRunner.rollbackTransaction();
     console.log("Cannot import the event list", err);
   } finally {
-    await queryRunner.release();
+    queryRunner.release();
     console.log("end event import process");
   }
 }

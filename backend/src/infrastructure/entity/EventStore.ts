@@ -1,5 +1,5 @@
 import { Entity, PrimaryGeneratedColumn, Column, Index } from "typeorm";
-import { EventStore as DomainEventStore } from "../../event-sourcing/store/EventStore";
+import { Event } from "../../event-sourcing/store/Event";
 
 @Entity({ name: "event_store" })
 export class EventStore {
@@ -16,8 +16,8 @@ export class EventStore {
   @Column({ type: "jsonb" })
   event: object;
 
-  static toDomain(eventStore: EventStore): DomainEventStore {
-    return DomainEventStore.create({
+  static toDomain(eventStore: EventStore): Event {
+    return Event.create({
       id: eventStore.id,
       name: eventStore.name,
       entityId: eventStore.entityId,
@@ -25,10 +25,11 @@ export class EventStore {
     });
   }
 
-  fromDomain(eventStore: DomainEventStore): void {
+  fromDomain(eventStore: Event): EventStore {
     this.id = eventStore.id;
     this.name = eventStore.name;
     this.entityId = eventStore.entityId;
     this.event = { ...eventStore.event, name: eventStore.name };
+    return this;
   }
 }

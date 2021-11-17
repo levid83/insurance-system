@@ -1,23 +1,21 @@
-import { Command } from "./Command";
-import { CommandHandler } from "./CommandHandler";
-import { Event } from "./Event";
+import { CommandInterface } from "./CommandInterface";
+import { CommandHandler } from "./CommandHandlerInterface";
+import { EventInterface } from "./EventInterface";
 import { EventStore } from "./EventStore";
 
-export interface Service {
-  execute(command: Command): void;
+export interface ServiceInterface {
+  execute(command: CommandInterface): void;
 }
 
-export abstract class EventSourcingBase<C extends Command, E extends Event>
-  implements Service
+export abstract class EventSourcingBase<
+  C extends CommandInterface,
+  E extends EventInterface
+> implements ServiceInterface
 {
   constructor(
-    private commandHandler: CommandHandler<C, E>,
-    private eventStoreService: EventStore
+    protected commandHandler: CommandHandler<C, E>,
+    protected eventStore: EventStore
   ) {}
 
-  async execute(command: C) {
-    const event = await this.commandHandler.execute(command);
-    if (event === false) return false;
-    return await this.eventStoreService.save(event);
-  }
+  abstract execute(command: C): Promise<EventInterface | boolean>;
 }
