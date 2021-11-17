@@ -1,3 +1,6 @@
+import { useContext, useEffect } from "react";
+import { ContractContext } from "./ContractContainer";
+
 import useService from "../hooks/useService";
 import ContractService from "../services/ContractService";
 
@@ -16,10 +19,21 @@ import { Box } from "@mui/material";
 import Notification from "./Notification";
 
 const AddContractForm = () => {
+  const ctx = useContext(ContractContext);
   const [success, postContract, error, isLoading] = useService(
     ContractService.postContract,
     null
   );
+
+  useEffect(() => {
+    if (success) {
+      const tout = setTimeout(() => ctx.refresh(), 3000);
+      return () => {
+        clearTimeout(tout);
+      };
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [success]);
 
   const validationSchema = Yup.object().shape({
     premium: Yup.number()
