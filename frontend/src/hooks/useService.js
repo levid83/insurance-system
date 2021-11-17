@@ -9,7 +9,6 @@ const UseService = (serviceFunction, initialState) => {
     (props = {}) => {
       setIsLoading(true);
       setError("");
-      setData(initialState);
       return serviceFunction(props)
         .then((data) => {
           setData(data);
@@ -20,7 +19,7 @@ const UseService = (serviceFunction, initialState) => {
           setIsLoading(false);
         });
     },
-    [serviceFunction, initialState]
+    [serviceFunction]
   );
 
   return [data, callService, error, isLoading];
